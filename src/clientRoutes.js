@@ -12,6 +12,8 @@ const debug = require('debug')('bitgo:express');
 const util = require('./util');
 const errors = require('./errors');
 
+const { convertCashAddrToLegacy } = require('./mrcoin');
+
 const BITGOEXPRESS_USER_AGENT = 'BitGoExpress/' + pjson.version;
 
 const handlePing = function(req) {
@@ -360,6 +362,7 @@ const handleV2SendOne = function(req) {
   return coin.wallets().get({ id: req.params.id, reqId })
   .then(function(wallet) {
     req.body.reqId = reqId;
+    req.body.address = convertCashAddrToLegacy(req.params.coin, req.body.address);
     return wallet.send(req.body);
   })
   .catch(function(err) {
