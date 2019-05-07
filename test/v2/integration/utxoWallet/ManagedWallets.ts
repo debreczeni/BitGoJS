@@ -550,22 +550,28 @@ export class ManagedWallets {
 
   async checkTransfers() {
     // ignore failed transfers before this point
-    const checkpoint = moment('2019-04-24');
+    const checkpoint = moment().subtract(1, 'days');
     const managedWallets = await this.getAll();
     const errors = await runCollectErrors(
       managedWallets,
       async(mw) => {
         const w = mw.wallet;
-        const transferCount = async(state) =>
+        const transfersWithState = async(state) =>
           (await w.transfers({ state, dateGte: checkpoint.toISOString() }))
-          .transfers.length;
+          .transfers;
 
-        const nRemovedTransfers = await transferCount('removed');
-        const nFailedTransfers = await transferCount('failed');
-        if (nRemovedTransfers > 0 || nFailedTransfers > 0) {
+        const [removedTransfers, failedTransfers] = await Promise.all(
+          [transfersWithState('removed'), transfersWithState('failed')]
+        );
+
+        const dumpTransfers = (transfers) => transfers.map(({ id, txid }) =>
+          `{id=${id},txid=${txid}}`).join(',');
+
+        if (removedTransfers.length > 0 || failedTransfers.length > 0) {
           throw new Error(
             `wallet ${w.label()} transfer failures: ` +
-            `${nFailedTransfers} failed, ${nRemovedTransfers} removed`
+            `failed: [${dumpTransfers(failedTransfers)}]` +
+            `removed: [${dumpTransfers(removedTransfers)}]`
           );
         }
       }
