@@ -162,13 +162,13 @@ export class ManagedWallets {
       const mw = this;
       after(async function() {
         this.timeout(600_000);
-        this.debug('resetWallets() start');
+        mw.debug('resetWallets() start');
 
         const errors = [];
 
         try {
           await mw.resetWallets();
-          this.debug('resetWallets() finished without error');
+          mw.debug('resetWallets() finished without error');
         } catch (e) {
           console.error(e);
           errors.push(e);
@@ -176,7 +176,7 @@ export class ManagedWallets {
 
         try {
           await mw.checkTransfers();
-          this.debug('checkTransfers() finished without error');
+          mw.debug('checkTransfers() finished without error');
         } catch (e) {
           console.error(e);
           errors.push(e);
