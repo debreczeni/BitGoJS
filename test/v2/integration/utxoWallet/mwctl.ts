@@ -5,7 +5,7 @@ import { formatWalletTable } from './display';
 
 const main = async() => {
   // debugLib.enable('ManagedWallets,bitgo:*,superagent:*');
-  makeDebug.enable('ManagedWallets');
+  makeDebug.enable('ManagedWallets:*,superagent');
 
   const { ArgumentParser } = require('argparse');
   const parser = new ArgumentParser();

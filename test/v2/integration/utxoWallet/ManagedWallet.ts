@@ -119,7 +119,7 @@ export class ManagedWallet {
 
     if (needsReset) {
       return {
-        excessUnspents: hasMissingUnspent,
+        excessUnspents: hasExcessUnspents,
         missingUnspents: hasMissingUnspent
       };
     }
