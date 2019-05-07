@@ -151,41 +151,35 @@ export class ManagedWallets {
     }
     this.username = username;
     // @ts-ignore
-    this.bitgo = new BitGo({ env });
+    this.bitgo = new BitGo({env});
     this.basecoin = this.bitgo.coin('tbtc');
     this.poolSize = poolSize;
     this.walletConfig = walletConfig;
     this.labelPrefix = `managed/${walletConfig.name}`;
     this.dryRun = dryRun;
+  }
 
-    if ('after' in global) {
-      const mw = this;
-      after(async function() {
-        this.timeout(600_000);
-        mw.debug('resetWallets() start');
+  public async cleanup() {
+    const errors = [];
 
-        const errors = [];
+    try {
+      await this.resetWallets();
+      this.debug('resetWallets() finished without error');
+    } catch (e) {
+      console.error(e);
+      errors.push(e);
+    }
 
-        try {
-          await mw.resetWallets();
-          mw.debug('resetWallets() finished without error');
-        } catch (e) {
-          console.error(e);
-          errors.push(e);
-        }
+    try {
+      await this.checkTransfers();
+      this.debug('checkTransfers() finished without error');
+    } catch (e) {
+      console.error(e);
+      errors.push(e);
+    }
 
-        try {
-          await mw.checkTransfers();
-          mw.debug('checkTransfers() finished without error');
-        } catch (e) {
-          console.error(e);
-          errors.push(e);
-        }
-
-        if (errors.length > 0) {
-          throw new Error(`errors in after() hook`);
-        }
-      });
+    if (errors.length > 0) {
+      throw new Error(`errors in after() hook`);
     }
   }
 

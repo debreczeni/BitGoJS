@@ -209,6 +209,11 @@ const runTests = (walletConfig: WalletConfig) => {
         await callback(testWallets);
       });
     });
+
+    after(async function() {
+      this.timeout(600_000);
+      await testWallets.cleanup();
+    });
   });
 };
 
