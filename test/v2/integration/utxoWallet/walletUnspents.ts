@@ -5,12 +5,7 @@
 import * as assert from 'assert';
 
 import {
-  GroupPureP2sh,
-  GroupPureP2shP2wsh,
-  GroupPureP2wsh,
-  WalletConfig,
   ManagedWallets,
-  sumUnspents,
   walletPassphrase
 } from './ManagedWallets';
 
@@ -20,6 +15,7 @@ import * as Bluebird from 'bluebird';
 
 import debugLib from 'debug';
 import { TestFunction, ExclusiveTestFunction } from 'mocha';
+import { GroupPureP2sh, GroupPureP2shP2wsh, GroupPureP2wsh, sumUnspents, WalletConfig } from './types';
 const debug = debugLib('integration-test-wallet-unspents');
 
 const wait = async(seconds) => {
@@ -46,7 +42,7 @@ walletTest('should self-send to new default receive addr', async function(testWa
   await wallet.sendMany({
     feeRate,
     recipients: [{ address, amount }],
-    walletPassphrase,
+    walletPassphrase
   });
 });
 
