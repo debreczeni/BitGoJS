@@ -475,7 +475,7 @@ export class ManagedWallets {
     );
 
     this.debug(`Checking reset for ${managedWallets.length} wallets:`);
-    this.debug(formatWalletTable(managedWallets));
+    this.debug('\n' + formatWalletTable(managedWallets));
 
     const feeRate = 10_000;
     const sends = await Promise.all(managedWallets.map((m) => m.getSends(managedFaucet, feeRate)));
