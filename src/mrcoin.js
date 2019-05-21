@@ -20,6 +20,27 @@ const convertCashAddrToLegacy = (coin, address) => {
   return address;
 };
 
+const convertLegacyToCashAddr = (coin, address) => {
+  if (!['bch', 'tbch'].includes(coin)) {
+    return address;
+  }
+
+  try {
+    const format = bchaddr.detectAddressFormat(address);
+
+    if (format === bchaddr.Format.Legacy) {
+      console.log('log [MrCoin]: received address in Legacy format (%s), converting to CashAddr...', address);
+      address = bchaddr.toCashAddress(address);
+    }
+  } catch (e) {
+    console.log('error [MrCoin]: received invalid BCH address: %s', address);
+    // Let BitGo handle invalid address formats from this point.
+  }
+
+  return address;
+};
+
 module.exports = {
-  convertCashAddrToLegacy
+  convertCashAddrToLegacy,
+  convertLegacyToCashAddr
 };
