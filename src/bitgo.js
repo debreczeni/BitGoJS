@@ -39,6 +39,8 @@ const crypto = require('crypto');
 const debug = require('debug')('bitgo:index');
 const { bytesToWord } = require('./v2/internal');
 
+const { convertLegacyToCashAddr } = require('./mrcoin');
+
 if (!process.browser) {
   require('superagent-proxy')(superagent);
 }
@@ -76,6 +78,11 @@ superagent.Request.prototype.result = function(optionalField) {
 const handleResponseResult = function(optionalField) {
   return function(res) {
     if (_.isNumber(res.status) && res.status >= 200 && res.status < 300) {
+      if (res.req.path.match(/^\/api\/v2\/bch\/wallet\/[a-f0-9]+\/address$/)) {
+        let { coin, address } = res.body;
+        res.body.address = convertLegacyToCashAddr(coin, address);
+      }
+
       return optionalField ? res.body[optionalField] : res.body;
     }
     throw errFromResponse(res);
